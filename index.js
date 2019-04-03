@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
-  ListView,
+  FlatList,
   Platform,
   StyleSheet,
   Text,
@@ -95,14 +95,7 @@ class Autocomplete extends Component {
   constructor(props) {
     super(props);
 
-    const ds = new ListView.DataSource({ rowHasChanged: props.rowHasChanged });
-    this.state = { dataSource: ds.cloneWithRows(props.data) };
     this.resultList = null;
-  }
-
-  componentWillReceiveProps({ data }) {
-    const dataSource = this.state.dataSource.cloneWithRows(data);
-    this.setState({ dataSource });
   }
 
   /**
@@ -122,20 +115,20 @@ class Autocomplete extends Component {
   }
 
   renderResultList() {
-    const { dataSource } = this.state;
     const {
       listStyle,
       renderItem,
       renderSeparator,
       keyboardShouldPersistTaps,
       onEndReached,
-      onEndReachedThreshold
+      onEndReachedThreshold,
+      data,
     } = this.props;
 
     return (
-      <ListView
+      <FlatList
         ref={(resultList) => { this.resultList = resultList; }}
-        dataSource={dataSource}
+        data={data}
         keyboardShouldPersistTaps={keyboardShouldPersistTaps}
         renderRow={renderItem}
         renderSeparator={renderSeparator}
@@ -159,16 +152,16 @@ class Autocomplete extends Component {
   }
 
   render() {
-    const { dataSource } = this.state;
     const {
       containerStyle,
       hideResults,
       inputContainerStyle,
       listContainerStyle,
       onShowResults,
-      onStartShouldSetResponderCapture
+      onStartShouldSetResponderCapture,
+      data
     } = this.props;
-    const showResults = dataSource.getRowCount() > 0;
+    const showResults = data.length > 0;
 
     // Notify listener if the suggestion will be shown.
     onShowResults && onShowResults(showResults);
